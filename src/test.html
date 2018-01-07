@@ -1,0 +1,118 @@
+﻿<!DOCTYPE HTML>
+
+<html>
+
+<head>
+
+  <title>检测图像的边缘</title>
+
+  <script>
+
+    var image = new Image();
+
+    window.onload = function () {
+
+      image.onload = demo;
+
+      image.src = "../static/2.png";
+
+    }
+
+    function demo() {
+
+      var canvas = document.getElementsByTagName('canvas')[0];
+      canvas.width = image.width
+      canvas.height = image.height
+      var context = canvas.getContext('2d');
+
+
+
+      // 在canvas上描画图像（之后检出的边缘图像会重叠之上）
+
+      context.drawImage(image, 0, 0);
+
+
+
+      // 获取图像数据
+
+      var input = context.getImageData(0, 0, canvas.width, canvas.height);
+
+
+
+      //生成盛放数据的空ImageData对象
+
+      var output = context.createImageData(canvas.width, canvas.height);
+
+
+
+      // 定义变量
+
+      // （这里使用了 input.width 与 input.height
+
+      // 使用了canvas.width 与 canvas.height时，
+
+      // 在高解像度的显示屏上的显示是不同的
+
+      var w = input.width, h = input.height;
+
+      var inputData = input.data;
+
+      var outputData = output.data;
+
+
+
+      // 检测边缘
+
+      for (var y = 1; y < h - 1; y += 1) {
+
+        for (var x = 1; x < w - 1; x += 1) {
+
+          for (var c = 0; c < 3; c += 1) {
+
+            var i = (y * w + x) * 4 + c;
+
+            outputData[i] = 127 + -inputData[i - w * 4 - 4] - inputData[i - w * 4] - inputData[i - w * 4 + 4] +
+
+              -inputData[i - 4] + 8 * inputData[i] - inputData[i + 4] +
+
+              -inputData[i + w * 4 - 4] - inputData[i + w * 4] - inputData[i + w * 4 + 4];
+
+          }
+
+          outputData[(y * w + x) * 4 + 3] = 255; // alpha
+
+        }
+
+      }
+
+
+
+      //描画图像
+
+      context.putImageData(output, 0, 0);
+
+    }
+
+  </script>
+
+</head>
+
+<body>
+
+  <h2>图像文件边缘检测演示及源代码</h2>
+
+  <h3>使用的图像</h3>
+
+  <p>
+    <img src="../static/2.png" alt="Edge detection">
+  </p>
+
+
+
+  <h3>在原来图像上描画使用canvas检测出的图像边缘</h3>
+
+  <canvas width="425" height="318"></canvas>
+
+</body>
+
+</html>
