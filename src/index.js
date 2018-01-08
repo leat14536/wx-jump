@@ -1,3 +1,5 @@
+import { version } from "punycode";
+
 /* eslint-disable */
 const cvs = document.querySelector('#canvas')
 const ctx = cvs.getContext('2d')
@@ -29,7 +31,9 @@ function start() {
   cvs.height = imgHeight
   ctx.drawImage(img, 0, 0, imgWidth, imgHeight)
   const { data: imageData } = imgData = ctx.getImageData(0, 0, imgWidth, imgHeight)
+  console.log(getColor(imageData, 0, 0))
   const [x] = pieceCenter = drawPieceBoundary(imageData)
+  // console.log('pieceCenter', pieceCenter)
   const vertex = getVertex(imageData, x < imgWidth / 2 ? imgWidth / 2 : 0, x)
   const platformCenter = drawPlatformBoundary(imageData, vertex, x)
   drawPixel(imageData, platformCenter[1], platformCenter[0])
